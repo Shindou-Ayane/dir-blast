@@ -1,5 +1,7 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
+import sys
+import os
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
@@ -51,5 +53,10 @@ if __name__ == "__main__":
     url = input("Enter the target URL: ")
     if url[-1] == "/":
         url = url[:-1]
-    wordlist_path = "./file/dictionary.txt"
+    
+    if getattr(sys, 'frozen', False):
+        wordlist_path = os.path.join(sys._MEIPASS, 'file', 'dictionary.txt')
+    else:
+        wordlist_path = "./file/dictionary.txt"
+    
     dir_bruteforce(url, wordlist_path)
