@@ -11,7 +11,7 @@
 
 1. 克隆仓库到本地：
     ```sh
-    git clone <仓库地址>
+    git clone https://github.com/xcx2006/dir-blast.git
     ```
 2. 进入项目目录：
     ```sh
