@@ -1,5 +1,16 @@
 import sys
+import os
 from function.dir_blast import parse_arguments, run_blast
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def main():
     print("--------------------------------------------------------------")
@@ -14,7 +25,7 @@ def main():
         sys.argv.append('-h')
     
     args = parse_arguments()
-    run_blast(args.url, args.wordlist, args.threads)
+    run_blast(args.url, resource_path(args.wordlist), args.threads)
 
 if __name__ == "__main__":
     main()

@@ -23,7 +23,7 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller --onefile --add-data "file/dictionary.txt;file" main.py
+          pyinstaller --onefile  --add-data "file/*;file" --add-data "function/*;function" main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
