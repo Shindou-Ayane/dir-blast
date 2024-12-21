@@ -1,5 +1,6 @@
-requests
-bs4
-tqdm
+aiohttp
 argparse
+beautifulsoup4
+requests
+tqdm
 python_version >= '3.6'
