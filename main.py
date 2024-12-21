@@ -1,22 +1,25 @@
+import builtins
 import sys
 import os
 import requests
-from concurrent.futures import ThreadPoolExecutor
 import argparse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 import logging
 import aiohttp
 import asyncio
 
+# 确保 'open' 函数在代码中可用
+if not hasattr(builtins, 'open'):
+    builtins.open = open
+
+# 配置日志记录
+logging.basicConfig(filename='errors.log', level=logging.ERROR, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 DEFAULT_WORDLIST = "file/dictionary.txt"
-
-# 配置日志记录
-logging.basicConfig(filename='errors.log', level=logging.ERROR)
 
 def resource_path(relative_path):
     """ 获取资源的绝对路径，适用于开发和 PyInstaller """
@@ -39,23 +42,26 @@ async def get_common_pattern(url):
                     # 提取页面中的所有文本
                     text = soup.get_text()
                     # 这里可以添加更多的逻辑来提取特定的模式
-                    return text[:10]  # 返回前20个字符作为示例
+                    return text[:10]  # 返回前10个字符作为示例
     except aiohttp.ClientError as e:
         logging.error(f"错误: {e} - {url}")
+    except Exception as e:
+        logging.error(f"未知错误: {e} - {url}")
     return ""
 
 async def check_directory(session, url, directory, common_pattern):
     url = url.rstrip('/')
     full_url = f"{url}/{directory.strip()}"
     try:
-        async with session.get(full_url, ssl=False, timeout=10) as response:
+        async with session.get(full_url, ssl=False) as response:
             if response.status == 200:
-                text = await response.read()
-                text = text.decode('utf-8', errors='ignore')
-                if common_pattern not in text:  # 使用提取的模式
+                text = await response.text()
+                if common_pattern not in text:
                     return full_url
     except aiohttp.ClientError as e:
         logging.error(f"错误: {e} - {full_url}")
+    except Exception as e:
+        logging.error(f"未知错误: {e} - {full_url}")
     return None
 
 async def run_blast(url, wordlist_path, threads):
@@ -67,10 +73,13 @@ async def run_blast(url, wordlist_path, threads):
         tasks = [check_directory(session, url, directory, common_pattern) for directory in directories]
         results = []
         for f in tqdm(asyncio.as_completed(tasks), total=len(tasks), desc="扫描进度"):
-            result = await f
-            if result:
-                tqdm.write(f"200: {result.strip()}")
-                results.append(result)
+            try:
+                result = await f
+                if result:
+                    tqdm.write(f"200: {result.strip()}")
+                    results.append(result)
+            except Exception as e:
+                logging.error(f"任务执行错误: {e}")
     return results
 
 def parse_arguments():
