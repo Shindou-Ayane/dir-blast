@@ -1,4 +1,5 @@
 requests
 bs4
+tqdm
 argparse
 python_version >= '3.6'
