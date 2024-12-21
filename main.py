@@ -46,17 +46,16 @@ def check_directory(url, directory, common_pattern):
         response = session.get(full_url, verify=False, timeout=10)  # 忽略 SSL 证书验证，设置超时为10秒
         if response.status_code == 200:
             if common_pattern not in response.text:  # 使用提取的模式
-                print(f"200: {full_url}")
                 return full_url
     except requests.RequestException as e:
         print(f"错误: {e} - {full_url}")
     return None
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="目录暴破工具")
+    parser = argparse.ArgumentParser(description="目录爆破工具")
     parser.add_argument("-u", "--url", required=True, help="目标 URL")
     parser.add_argument("-w", "--wordlist", nargs='?', default=DEFAULT_WORDLIST, help="字典文件路径")
-    parser.add_argument("-t", "--threads", type=int, default=20, help="线程数")
+    parser.add_argument("-t", "--threads", type=int, default=50, help="线程数")
     return parser.parse_args()
 
 def run_blast(url, wordlist_path, threads):

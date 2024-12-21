@@ -46,7 +46,7 @@
 
 - `-u` 或 `--url`：目标 URL 地址（必填）
 - `-w` 或 `--wordlist`：字典文件路径（默认: `dictionary.txt`）
-- `-t` 或 `--threads`：线程数（默认: 20）
+- `-t` 或 `--threads`：线程数（默认: 50）
 
 -----
 

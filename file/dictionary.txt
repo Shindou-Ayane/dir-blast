@@ -657,6 +657,7 @@ index.gz
 index.php.bak
 index.php~
 index.rar
+index.phps
 index.tar.bz2
 index.tar.gz
 index.tgz
