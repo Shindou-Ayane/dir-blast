@@ -5,9 +5,10 @@ import argparse
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 def check_directory(url, directory):
+    url = url.rstrip('/')
     full_url = f"{url}/{directory.strip()}"
     try:
-        response = requests.get(full_url, verify=False)
+        response = requests.get(full_url, verify=False)  # 忽略 SSL 证书验证
         if response.status_code == 200:
             print(f"200: {full_url}")
         elif response.status_code == 201:  
@@ -30,8 +31,8 @@ def check_directory(url, directory):
             print(f"401: {full_url}")
         elif response.status_code == 307:
             print(f"307: {full_url}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {full_url} - {e}")
+    except requests.RequestException as e:
+        print(f"Error: {e} - {full_url}")
 
 def load_wordlist(wordlist_path):
     with open(wordlist_path, 'r') as f:
