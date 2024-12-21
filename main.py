@@ -4,6 +4,9 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 import argparse
 from bs4 import BeautifulSoup
+from tqdm import tqdm
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
@@ -37,30 +40,17 @@ def check_directory(url, directory, common_pattern):
     url = url.rstrip('/')
     full_url = f"{url}/{directory.strip()}"
     try:
-        response = requests.get(full_url, verify=False)  # 忽略 SSL 证书验证
+        session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+        session.mount('https://', HTTPAdapter(max_retries=retries))
+        response = session.get(full_url, verify=False, timeout=10)  # 忽略 SSL 证书验证，设置超时为10秒
         if response.status_code == 200:
             if common_pattern not in response.text:  # 使用提取的模式
                 print(f"200: {full_url}")
-        elif response.status_code == 201:  
-            print(f"201: {full_url}")
-        elif response.status_code == 202:
-            print(f"202: {full_url}")
-        elif response.status_code == 203:
-            print(f"203: {full_url}")
-        elif response.status_code == 204:
-            print(f"204: {full_url}")
-        elif response.status_code == 205:
-            print(f"205: {full_url}")
-        elif response.status_code == 206:
-            print(f"206: {full_url}")
-        elif response.status_code == 405:
-            print(f"405: {full_url}")
-        elif response.status_code == 403:
-            print(f"403: {full_url}")
-        elif response.status_code == 401:
-            print(f"401: {full_url}")
+                return full_url
     except requests.RequestException as e:
         print(f"错误: {e} - {full_url}")
+    return None
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="目录暴破工具")
@@ -70,12 +60,14 @@ def parse_arguments():
     return parser.parse_args()
 
 def run_blast(url, wordlist_path, threads):
+
     common_pattern = get_common_pattern(url)
     with open(wordlist_path, 'r') as file:
         directories = file.readlines()
     with ThreadPoolExecutor(max_workers=threads) as executor:
-        for directory in directories:
-            executor.submit(check_directory, url, directory.strip(), common_pattern)
+        for directory in tqdm(executor.map(lambda directory: check_directory(url, directory, common_pattern), directories), total=len(directories), desc="扫描进度"):
+            if directory:
+                tqdm.write(f"200: {directory.strip()}")
 
 def main():
     print("--------------------------------------------------------------")
@@ -85,10 +77,6 @@ def main():
     print("| | (_| | | | | |    |_____| | |_) | | | | (_| | \__ \ | |_  |")
     print("|  \__,_| |_| |_|            |_.__/  |_|  \__,_| |___/  \__| |")
     print("--------------------------------------------------------------")
-    
-    if len(sys.argv) == 1:
-        sys.argv.append('-h')
-    
     args = parse_arguments()
     run_blast(args.url, resource_path(args.wordlist), args.threads)
 
