@@ -1,0 +1,20 @@
+https://ctf.show/faq
+https://ctf.show/FAQ
+https://ctf.show//
+https://ctf.show/logout
+https://ctf.show/personal
+https://ctf.show/admin
+https://ctf.show/redirect
+https://ctf.show/settings
+https://ctf.show/setup
+https://ctf.show/submit
+https://ctf.show/api/v1/swagger.json
+https://ctf.show/user
+https://ctf.show/login
+https://ctf.show/oauth
+https://ctf.show/profile
+https://ctf.show/register
+https://ctf.show/#www.demo.com	www=%a%,demo=%b%,com=%c%
+https://ctf.show/#demo.com    		demo=%b%,com=%c%
+https://ctf.show/test
+https://ctf.show/events
