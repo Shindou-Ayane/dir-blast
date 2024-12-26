@@ -23,7 +23,7 @@
 
 1. 克隆仓库到本地：
     ```sh
-    git clone https://github.com/xcx2006/dir-blast.git
+    git clone https://github.com/Yohane-Mashiro/dir-blast.git
     ```
 2. 进入项目目录：
     ```sh
@@ -40,7 +40,7 @@
 
 ### 使用 Release
 
-你也可以从 [Release 页面](https://github.com/Shindou-Ayane/dir-blast/releases) 下载最新的可执行文件。
+你也可以从 [Release 页面](https://github.com/Yohane-Mashiro/dir-blast/releases) 下载最新的可执行文件。
 
 ## 参数说明
 
